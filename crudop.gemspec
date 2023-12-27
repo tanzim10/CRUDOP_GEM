@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.description = "Gem to create CRUD operation for any model "
   spec.homepage = "https://github.com/tanzim10/CRUDOP_GEM"
   spec.license = "MIT"
-  spec.required_ruby_version = ">= 2.6.0"
+  spec.required_ruby_version = ">= 3.2.0"
 
   spec.metadata["allowed_push_host"] = "Set to your gem server 'https://example.com'"
 
