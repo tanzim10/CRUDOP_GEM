@@ -19,7 +19,8 @@ Crudop can be used in any Ruby on Rails model to perform standard CRUD operation
 ### Create
 To create a new record:
 
-attributes = { name: 'John Doe', email: 'john@example.com' }
+attributes = { name: 'John Doe', email: 'john@example.com' } <br>
+
 user = Crudop::Record.create(User, attributes)
 
 ### READ
