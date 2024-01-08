@@ -7,16 +7,6 @@ require 'aws-sdk-dynamodb'
 module Crudop
 
   class Record
-
-  #   def self.read(table_name, key)
-  #     client.get_item(table_name: table_name, key: key).item
-  #   end
-
-  #   def self.update(table_name, key, attributes_updates)
-  #     client.update_item(table_name: table_name, key: key, attribute_updates: attributes_updates) 
-  #   end
-
-  # end
   TIMECLASSES = %w(ActiveSupport::TimeWithZone Time DateTime Date)
 
   class << self 
