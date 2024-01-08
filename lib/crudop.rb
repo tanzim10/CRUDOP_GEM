@@ -96,8 +96,8 @@ module Crudop
       params = {
         table_name: table_name,
         key:key,
-        expression_attribute_name = attributes_names,
-        expression_attribute_values = attribute_values,
+        expression_attribute_name :attributes_names,
+        expression_attribute_values : attribute_values,
         update_expression: update_expression
       }
 
@@ -178,28 +178,30 @@ module Crudop
     # @param value [String] value the value of the column which the query condition will be applied
 
     def get_item(table_name, key, value)
-      params = {
-        params[:table_name] = table_name
-        params[:expression_attribute_name] = {'#Q': key}
-        params[:expression_attribute_value] = {':q': value}
-        params[;key_condition_expression] = '#Q = :q'
-        params[:consistent_read] = true
-    }
+      params = {}
 
-        items = []
-        next_key = nil
-        loop do
-          query = dynamodb_client.query(params)
-          break if query.nil? || query[:items].nil? || query[:items].empty?
 
-          items.concat(parse_response(query[:items]))
-          last_key = query[:last_evaluated_key]['id'].to_i if query[:last_evaluated_key]
-          break if last_evaluated_key.nil? || next_key == last_key
+      params[:table_name] = table_name
+      params[:expression_attribute_name] = {'#Q': key}
+      params[:expression_attribute_value] = {':q': value}
+      params[:key_condition_expression] = '#Q = :q'
+      params[:consistent_read] = true
+    
 
-          next_key = last_key
-        end
+      items = []
+      next_key = nil
+      loop do
+        query = dynamodb_client.query(params)
+        break if query.nil? || query[:items].nil? || query[:items].empty?
 
-        items
+        items.concat(parse_response(query[:items]))
+        last_key = query[:last_evaluated_key]['id'].to_i if query[:last_evaluated_key]
+        break if last_evaluated_key.nil? || next_key == last_key
+
+        next_key = last_key
+      end
+
+      items
       rescue StandardError => exception
         puts "Error Retrieving item: #{exception.message}"
       end
