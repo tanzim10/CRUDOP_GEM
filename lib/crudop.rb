@@ -7,7 +7,7 @@ require 'aws-sdk-dynamodb'
 module Crudop
 
   class Record
-  TIMECLASSES = %w(ActiveSupport::TimeWithZone Time DateTime Date)
+    TIMECLASSES = %w(ActiveSupport::TimeWithZone Time DateTime Date)
     class << self
       def dynamodb_client(caller_options = {})
         cache = (@@dy_client ||= {})
@@ -94,8 +94,8 @@ module Crudop
         params = {
           table_name: table_name,
           key:key,
-          expression_attribute_name : attributes_names,
-          expression_attribute_values : attribute_values,
+          expression_attribute_name: attributes_names,
+          expression_attribute_values: attribute_values,
           update_expression: update_expression
         }
 
