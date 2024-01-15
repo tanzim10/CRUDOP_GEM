@@ -1,37 +1,31 @@
-# frozen_string_literal: true
-
 require_relative "crudop/version"
-require 'aws-sdk-dynamodb'
-
+require "aws-sdk-dynamodb"
 
 module Crudop
+  # This class handles records for Crudop DynamoDB interactions
+  class Dynamodb
+    # Constant for Time classes
+    TIMECLASSES = %w[ActiveSupport::TimeWithZone Time DateTime Date].freeze
 
-  class Record
-    TIMECLASSES = %w(ActiveSupport::TimeWithZone Time DateTime Date)
     class << self
+      # Returns a DynamoDB client with proper configuration
       def dynamodb_client(caller_options = {})
         cache = (@@dy_client ||= {})
         keys = caller_options.map { |k, v| "#{k},#{v}" }.sort.join('|').freeze
-        if cache.keys?(keys)
-          cache = cache[keys]
-        else
-          pass
-          cache[keys] = begin
-            need_fallback = !lambda? && local?  # Check if we need to fallback and the host is local if needfallback is true
-            opts = {region: ENV['AWS_REGION'] || "us-east-1"}
-            opts.merge!(credentials_dy)
-            opts.merge!(caller_options)
-            puts "DynamoDB Client Options: #{opts}"
-            Aws::DynamoDB::Client.new(*opts)
-          end
-        end
+        return cache[keys] if cache.key?(keys)
+
+        need_fallback =  !lambda? && local?
+        opts = { region: ENV["AWS_REGION"] || "us-east-1" }
+        opts.merge!(credentials_dy)
+        opts.merge!(caller_options)
+        puts "DynamoDB Client Options: #{opts}"
+        cache[keys] = Aws::DynamoDB::Client.new(**opts)
       end
 
-
       def credentials_dy
-        key_id = ENV["AWS_ACCESS_KEY_ID"] || 'fake_key'
+        key_id = ENV["AWS_ACCESS_KEY_ID"] || "fake_key"
         secret = ENV["AWS_SECRET_ACCESS_KEY"] || "fake_secret"
-        return {access_key_id: key_id, secret_access_key: secret}
+        return { access_key_id: key_id, secret_access_key: secret }
       end
 
       def dynamic_endpoint(fallback: false)
@@ -63,8 +57,8 @@ module Crudop
         dy_attributes[:item][:last_synced_at] = Time.now.iso8601
         dynamodb_client.put_item(dy_attributes)
       end
-
-          ##
+      
+      ##
       # Updates a row in the DynamoDB table
       # This method will update the existing items if a key already exists.
       # @param table_name [String] The name of the table which the items will be written to.
@@ -109,7 +103,7 @@ module Crudop
       # @param key [Hash] The key of the item to be retrieved.
       # @param requested_fields [Array] The attributes to be retrieved from the table.
 
-      def dynamo_get_item(table_name, keyhash, requested_fields = [])
+      def dy_get_item(table_name, keyhash, requested_fields = [])
         params = {
           table_name: table_name,
           key: keyhash
@@ -333,8 +327,16 @@ module Crudop
         }
       end
 
+      
     end
 
   end
 
 end
+
+# module Dytest
+#   def dy_print
+#       puts "Hello World"
+#     end
+# end
+
