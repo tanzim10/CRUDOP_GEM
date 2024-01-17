@@ -334,9 +334,4 @@ module Crudop
 
 end
 
-# module Dytest
-#   def dy_print
-#       puts "Hello World"
-#     end
-# end
 
