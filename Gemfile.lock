@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     crudop (0.1.0)
-      activerecord (~> 6.0)
+      activerecord (>= 6.0, < 8)
       aws-sdk-dynamodb (~> 1)
 
 GEM
