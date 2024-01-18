@@ -133,6 +133,33 @@ module Crudop
         end
         sanitized
       end
+      
+      #  Scan the table and return all the items
+      # @param table_name [String] The name of the table which the items will be retrieved from.
+      # @return [Array] An array of items from the table.
+
+
+      def scan_dynamodb_table(table_name)
+        client = Aws::DynamoDB::Client.new
+        items = []
+        scan_parameters = { table_name: table_name }
+
+        begin
+          loop do
+            response = client.scan(scan_parameters)
+            items.concat(response.items)
+            break unless response.last_evaluated_key
+
+            scan_parameters[:exclusive_start_key] = response.last_evaluated_key
+          end
+        rescue Aws::DynamoDB::Errors::ServiceError => error
+          puts "Unable to scan the table: #{error.message}"
+        end
+
+        items
+      end
+
+
 
     end
   end
