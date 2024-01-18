@@ -22,8 +22,8 @@ module Crudop
       end
 
       def credentials_dy
-        key_id = ENV["AWS_ACCESS_KEY_ID"] || "AKIARVXO2GBQQQCSSYAX"
-        secret = ENV["AWS_SECRET_ACCESS_KEY"] || "pzgLik8JV28J8jhEo+KyYcKPSWolrpsJKYzdIgUb"
+        key_id = ENV["AWS_ACCESS_KEY_ID"] || "fake_key_id"
+        secret = ENV["AWS_SECRET_ACCESS_KEY"] || "fake_secret"
         return { access_key_id: key_id, secret_access_key: secret }
       end
 
