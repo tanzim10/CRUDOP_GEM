@@ -140,7 +140,7 @@ module Crudop
 
 
       def scan_dynamodb_table(table_name)
-        client = Aws::DynamoDB::Client.new
+        client = dynamodb_client
         items = []
         scan_parameters = { table_name: table_name }
 
@@ -158,6 +158,32 @@ module Crudop
 
         items
       end
+
+      # Query the table and return the items using primary key
+      # @param table_name [String] The name of the table which the items will be retrieved from.
+      # @param key [Hash] The Hash of the key of the item to be retrieved.
+
+
+      def dy_query_item(table_name, primary_key_name, primary_key_value)
+        dy_attributes = {
+          table_name: table_name,
+          key_condition_expression: "#{primary_key_name} = :pk_val",
+          expression_attribute_values: {
+            ":pk_val" => primary_key_value
+          }
+        }
+      
+        begin
+          response = dynamodb_client.query(dy_attributes)
+          response.items 
+        rescue StandardError => exception
+          puts "Error querying item: #{exception.message}"
+          []
+        end
+      end
+      
+
+
 
 
 
