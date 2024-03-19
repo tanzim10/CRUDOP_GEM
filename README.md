@@ -6,7 +6,9 @@ Crudop is a Ruby gem designed for streamlined interactions with AWS DynamoDB. It
 
 Add this line to your application's Gemfile:
 
-```gem 'crudop', git: 'https://github.com/tanzim10/CRUDOP_GEM.git' ```
+``` ruby
+gem 'crudop', git: 'https://github.com/tanzim10/CRUDOP_GEM.git'
+```
 
 Then execute it:
 
