@@ -21,7 +21,7 @@ RSpec.describe Crudop::Dynamo do
 
     it "creates an item in the table" do
       Crudop::Dynamo.dy_put_item('dynamo', { 'test_key' => 'test' })
-      expect(test_record). to be_truthy
+      expect(test_record). to be_nill
     end
   end
 
