@@ -91,10 +91,45 @@ RSpec.describe Crudop::Dynamo do
       expect(sanitized_hash['empty']).to eq("<empty string>")
     end
   end
+
+
+  describe ".dy_delete_item" do
+    let(:dynamo_client_double) { instance_double(Aws::DynamoDB::Client) }
+    let(:table_name) { 'Employee' }
+    let(:key) { { "EMPNO" => 1 } }
+    let(:mock_response) { double("response") }
   
-
-
-
+    before do
+      allow(Crudop::Dynamo).to receive(:dynamodb_client).and_return(dynamo_client_double)
+      allow(dynamo_client_double).to receive(:delete_item).and_return(mock_response)
+    end
+  
+    it "deletes an item from the table" do
+      result = Crudop::Dynamo.dy_delete_item(table_name, key)
+      expect(result).to eq(mock_response)
+      expect(dynamo_client_double).to have_received(:delete_item).with(table_name: table_name, key: key)
+    end
+  end
+  
+  describe '.dy_get_item' do
+    let(:dynamodb_client) { instance_double(Aws::DynamoDB::Client) }
+    let(:table_name) { 'Employee' }
+    let(:key) { { "EMPNO" => 1, "FirstName" => "Tanzim" } }
+    let(:mock_response) {{ "EMPNO" => 1, "FirstName" => "Tanzim" }}
+  
+    before do
+      allow(Crudop::Dynamo).to receive(:dynamodb_client).and_return(dynamodb_client)
+      # Adjust the stub to explicitly expect keyword arguments
+      allow(dynamodb_client).to receive(:get_item).and_return(mock_response)
+    end
+  
+    it 'retrieves an item from the DynamoDB table' do
+      result = Crudop::Dynamo.dy_get_item(table_name, key)
+      expect(result).to eq(mock_response)
+      expect(dynamodb_client).to have_received(:get_item).with(table_name: table_name, key: key)
+    end
+  end
+  
 end
 
 
