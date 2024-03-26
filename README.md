@@ -48,27 +48,27 @@ client = Crudop.dynamo_client
  new_item = { 'id' => 1234567, 'first_name' => 'John', 'last_name' => 'Doe' }
 ```
  ```ruby
-Crudop.dynamo_put_item('players_table_name', new_item)
+Crudop::Dynamo.dynamo_put_item('players_table_name', new_item)
  ```
 
 ### Read
 Get Item by Key <br>
 
 ```ruby
-Crudop::Dynamodb.get_item(table_name, key, value) 
+Crudop::Dynamo.get_item(table_name, key, value) 
 ```
 
 Retrieves an item based on the specified key and value, querying a specific table.
 
 ### Query by Index
 ```ruby
-Crudop::Dynamodb.query_by_index(table_name, key, value, index_name)
+Crudop::Dynamo.query_by_index(table_name, key, value, index_name)
 ```
 
 Queries items using a Global Secondary Index (GSI).
 ```
 Example: <br>
-items = Crudop::Dynamodb.query_by_index('Players', 'team_id', 'team123', 'TeamIndex') 
+items = Crudop::Dynamo.query_by_index('Players', 'team_id', 'team123', 'TeamIndex') 
 ```
 
 <br>
@@ -85,7 +85,7 @@ The dy_update_item method in the Crudop DynamoDB Gem is used for updating specif
 
 Update Item <br>
 ```ruby
-Crudop::Dynamodb.dy_update_item(table_name, key, attribute_updates)
+Crudop::Dynamo.dy_update_item(table_name, key, attribute_updates)
 ```
 
 ```
@@ -99,7 +99,7 @@ attribute_updates = { 'score' => 100, 'status' => 'active' }
 
 __Delete Item__ <br><br> 
 ```ruby
-Crudop::Dynamodb.dy_delete_item(table_name, key, value) 
+Crudop::Dynamo.dy_delete_item(table_name, key, value) 
 ```
 Deletes an item based on the specified key.
 
