@@ -48,31 +48,25 @@ client = Crudop.dynamo_client
  new_item = { 'id' => 1234567, 'first_name' => 'John', 'last_name' => 'Doe' }
 ```
  ```ruby
-Crudop::Dynamo.dynamo_put_item('players_table_name', new_item)
+Crudop::Dynamo.dy_put_item('players_table_name', new_item)
  ```
 
 ### Read
-Get Item by Key <br>
+Get Item by Key
 
 ```ruby
-Crudop::Dynamo.get_item(table_name, key, value) 
+Crudop::Dynamo.dy_get_item(table_name, key, value) 
 ```
 
 Retrieves an item based on the specified key and value, querying a specific table.
+key = {"EMPNO": "1", "FirstName": "Tanzim"}
 
-### Query by Index
+### Query 
 ```ruby
-Crudop::Dynamo.query_by_index(table_name, key, value, index_name)
+Crudop::Dynamo.dy_query_item(table_name, primary_key,primary_value)
 ```
 
-Queries items using a Global Secondary Index (GSI).
-```
-Example: <br>
-items = Crudop::Dynamo.query_by_index('Players', 'team_id', 'team123', 'TeamIndex') 
-```
-
-<br>
-Parse Response <br>
+Parse Response 
 
 ```ruby
 Crudop::Dynamodb.parse_response(response_items)
@@ -91,7 +85,7 @@ Crudop::Dynamo.dy_update_item(table_name, key, attribute_updates)
 ```
 Example
 table_name = "Players"
-key = { player_id: 'p123' } <br>
+key = { player_id: 'p123' } 
 attribute_updates = { 'score' => 100, 'status' => 'active' }
 ```
 
@@ -102,7 +96,7 @@ __Delete Item__ <br><br>
 Crudop::Dynamo.dy_delete_item(table_name, key, value) 
 ```
 Deletes an item based on the specified key.
-
+key = {"EMPNO": "1", "FirstName": "Tanzim"} It needs a primary key or a composite key depending on the structure of the table.
 
 
 
