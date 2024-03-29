@@ -62,18 +62,25 @@ module Crudop
       # # @param key [Hash] The key of the item to be deleted.
 
       # # Example
-      # #   key = {'EMPNO': "1"} the primary key of the item can be like this or have a sort key as well.
+      # #   key = {'EMPNO': "1" } if the primary key is only consists of a single partion key else use the sort key as well then {"EMPNO": "1", "FirstName": "Tanzim"}
 
       def dy_delete_item(table_name, key)
+
         dy_attributes = {table_name: table_name, 
                           key: key}
+
         begin
-          dynamodb_client.delete_item(dy_attributes)
+          if !item_exists?(table_name, key)
+            { success: false, message: "Item does not exist in the table." }
+          else
+            dynamodb_client.delete_item(dy_attributes)
+            { success: true, message: "Item successfully deleted!" }
+          end
+
         rescue StandardError => exception
-          puts "Error deleting item: #{exception.message}"
+          { success: false, message: "Error deleting item: #{exception.message}" }
         end
       end
-
 
      
       def dy_update_item(table_name, key, attribute_updates)
@@ -91,16 +98,20 @@ module Crudop
         end
       
         update_expression = "SET " + update_expressions.join(", ")
-      
-        params = {
-          table_name: table_name,
-          key: key,
-          expression_attribute_names: attribute_names,
-          expression_attribute_values: attribute_values,
-          update_expression: update_expression
-        }
-      
-        dynamodb_client.update_item(params)
+        begin 
+          params = {
+            table_name: table_name,
+            key: key,
+            expression_attribute_names: attribute_names,
+            expression_attribute_values: attribute_values,
+            update_expression: update_expression
+          }
+        
+          dynamodb_client.update_item(params)
+          { success: true, message: "Item successfully updated!"}
+        rescue StandardError => exception
+          { success: false, message: "Error updating item: #{exception.message}" }
+        end
       end
       
 
@@ -164,28 +175,47 @@ module Crudop
       # @param key [Hash] The Hash of the key of the item to be retrieved.
 
 
-      def dy_query_item(table_name, primary_key_name, primary_key_value)
+      def dy_query_item(table_name, partion_key, sort_key, partion_key_value, sort_key_value, operators)
+          operator_str = operators.to_s
+          key_condition_expression = "#{partion_key} = :partion_key_value"
+          expression_attribute_values = {
+            ":partion_key_value" => partion_key_value
+          }
+          if sort_key && sort_key_value
+            if ["=", ">", "<", ">=", "<="].include?(operator_str)
+              puts "sortkey : #{sort_key} operators: #{operator_str} partion_key : #{partion_key}"
+              key_condition_expression += " AND #{sort_key} #{operator_str} :sort_key_value"
+      
+              expression_attribute_values[":sort_key_value"] = sort_key_value
+            else
+              raise ArgumentError, "Invalid operator: #{operator_str}"
+            end
+          end
+
+
         dy_attributes = {
           table_name: table_name,
-          key_condition_expression: "#{primary_key_name} = :pk_val",
-          expression_attribute_values: {
-            ":pk_val" => primary_key_value
-          }
+          key_condition_expression: key_condition_expression,
+          expression_attribute_values: expression_attribute_values
         }
       
         begin
           response = dynamodb_client.query(dy_attributes)
           response.items 
+          { success: true, message: "Item successfully queried!"}
         rescue StandardError => exception
           puts "Error querying item: #{exception.message}"
           []
         end
       end
-      
 
-
-
-
+      private
+        def item_exists?(table_name, key)
+          dy_attributes = {table_name: table_name, 
+                            key: key}
+          response = dynamodb_client.get_item(dy_attributes)
+          response.item
+        end
 
     end
   end

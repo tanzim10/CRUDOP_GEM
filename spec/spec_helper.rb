@@ -24,18 +24,3 @@ RSpec.configure do |config|
   end
 end
 
-RSpec.shared_context "table setup" do
-  before(:each) do
-    @test_table_name = "dynamo"
-    @key = "test_key"
-    @test_item = { "test_key" => key, "name" => "test", "attribute" => "some_attribute" }
-  end
-
-  let(:test_table_name) {'dynamo'}
-  let(:key) {'test_key'}
-  let(:test_item) {{'test_key' => key, 'name' => 'test', 'attribute' => 'some_attribute'}}
-  let(:test_record) do
-    Crudop::Dynamodb.dy_get_item(test_table_name, { "test_key"=>key })[:item]
-  end
-end
-
