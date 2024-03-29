@@ -96,20 +96,30 @@ RSpec.describe Crudop::Dynamo do
   describe ".dy_delete_item" do
     let(:dynamo_client_double) { instance_double(Aws::DynamoDB::Client) }
     let(:table_name) { 'Employee' }
-    let(:key) { { "EMPNO" => 1 } }
-    let(:mock_response) { double("response") }
-  
+    let(:key) { { "EMPNO" => 1, "FirstName" => "Tanzim" } }
+
     before do
       allow(Crudop::Dynamo).to receive(:dynamodb_client).and_return(dynamo_client_double)
-      allow(dynamo_client_double).to receive(:delete_item).and_return(mock_response)
+      # Stub the delete_item method to simulate a successful deletion.
+      allow(dynamo_client_double).to receive(:get_item)
+      .with(hash_including(:table_name => table_name, :key => key))
+      .and_return(double(item: key))  
+      allow(dynamo_client_double).to receive(:delete_item).and_return(nil)
     end
-  
+
     it "deletes an item from the table" do
+      
       result = Crudop::Dynamo.dy_delete_item(table_name, key)
-      expect(result).to eq(mock_response)
-      expect(dynamo_client_double).to have_received(:delete_item).with(table_name: table_name, key: key)
+
+      expect(dynamo_client_double).to have_received(:get_item)
+        .with(hash_including(table_name: table_name, key: key))
+  
+      expect(result).to eq({ success: true, message: "Item successfully deleted!" })
+    
+      expect(dynamo_client_double).to have_received(:delete_item).with(hash_including(table_name: table_name, key: key))
     end
-  end
+end
+
   
   describe '.dy_get_item' do
     let(:dynamodb_client) { instance_double(Aws::DynamoDB::Client) }
